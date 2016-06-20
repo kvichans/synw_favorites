@@ -1,0 +1,1 @@
+from .sw_favs import Command
