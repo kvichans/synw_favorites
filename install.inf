@@ -1,0 +1,15 @@
+[info]
+title=Favorites
+desc=Manages "favorites": list of user-selected file names, to quickly open them
+type=py-plugin
+subdir=syn_favorites
+
+[ini1]
+section=Commands
+id=Favorites\Favorites...
+params=dlg
+
+[ini2]
+section=Commands
+id=Favorites\Add current file to Favorites
+params=add_cur
