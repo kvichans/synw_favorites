@@ -1,4 +1,4 @@
-﻿''' Plugin for CudaText editor
+''' Plugin for CudaText editor
 Authors:
     Andrey Kvichansky    (kvichans on github.com)
 Version:
@@ -16,8 +16,6 @@ from    .sw_plug_lib    import *
 
 OrdDict = collections.OrderedDict
 
-#FROM_API_VERSION= '1.0.119'
-
 # I18N
 _       = get_translation(__file__)
 
@@ -29,8 +27,7 @@ pass;                           ##!! waits correction
 
 GAP     = 5
 
-fav_json= r'c:\Programs\SynWrite\Settings\cuda_favorites.json'
-#fav_json= app.app_path(app.APP_DIR_SETTINGS)+os.sep+'cuda_favorites.json'
+fav_json= app.app_ini_dir()+os.sep+'syn_favorites.json'
 
 class Command:
     def add_cur(self):
