@@ -1,4 +1,4 @@
-''' Plugin for Synwrite
+﻿''' Plugin for Synwrite
 Authors:
     Andrey Kvichansky    (kvichans on github.com)
     Alexey T (Synwrite)
@@ -10,7 +10,7 @@ ToDo: (see end of file)
 import  re, os, json
 import	sw				as app 
 from 	sw 			import ed
-from  .sw_plug_lib    import *
+from    .sw_plug_lib    import *
 from collections import OrderedDict as OrdDict
 
 # I18N
@@ -23,11 +23,11 @@ pass;                           LOG = (-2==-2)  # Do or dont logging.
 
 GAP     = 5
 
-fav_json = app.app_ini_dir()+os.sep+'syn_favorites.json'
+fav_json= app.app_ini_dir()+os.sep+'syn_favorites.json'
 
 class Command:
     def add_filename(self, fn):
-        if not fn:  return    
+        if not fn:  return
         app.msg_status(_('Added to Favorites: ')+fn)
         
         stores  = json.loads(open(fav_json).read(), object_pairs_hook=OrdDict) \
@@ -37,7 +37,7 @@ class Command:
         files  += [fn]
         stores['fv_files'] = files
         open(fav_json, 'w').write(json.dumps(stores, indent=4))
-                             
+    
     def add_cur_file(self):
         self.add_filename(ed.get_filename())
         
@@ -71,7 +71,7 @@ class Command:
                            ,fold=fold), focus_cid='fvrs')
             if btn is None or btn=='-': return None
             
-            store_b = fold != vals['fold']
+#           store_b = fold != vals['fold']
             fold    = vals['fold']
             last    = vals['fvrs']
             if btn=='open' and files and last>=0 and os.path.isfile(files[last]):
@@ -79,17 +79,17 @@ class Command:
                 break#while
             
             # Modify
-#           store_b = False
+            store_b = 'fold' in chds
             if False:pass
-            elif btn=='addc' and ed.get_filename():
+            elif btn=='addc':
                 fn      = ed.get_filename()
-                if not any([os.path.samefile(fn, f) for f in files]):
+                if fn and not any([os.path.samefile(fn, f) for f in files]):
                     files  += [fn]
                     store_b = True
             elif btn=='brow':
-                fl      = app.dlg_file(True, '', '', '')
-                if fl and fl not in files:
-                    files  += [fl]
+                fn      = app.dlg_file(True, '', '', '')
+                if fn and not any([os.path.samefile(fn, f) for f in files]):
+                    files  += [fn]
                     store_b = True
             elif btn=='delt' and files and last>=0:
                 del files[last]
