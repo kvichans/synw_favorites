@@ -1,20 +1,17 @@
-''' Plugin for CudaText editor
+''' Plugin for Synwrite
 Authors:
     Andrey Kvichansky    (kvichans on github.com)
+    Alexey T (Synwrite)
 Version:
-    '1.0.0 2016-06-20'
+    '1.0.2 2016-06-21'
 ToDo: (see end of file)
 '''
 
-import  re, os, json, collections
+import  re, os, json
 import	sw				as app 
 from 	sw 			import ed
-#import  cudatext            as app
-#from    cudatext        import ed
-#from    cudax_lib       import log
-from    .sw_plug_lib    import *
-
-OrdDict = collections.OrderedDict
+from  .sw_plug_lib    import *
+from collections import OrderedDict as OrdDict
 
 # I18N
 _       = get_translation(__file__)
@@ -23,16 +20,16 @@ pass;                           # Logging
 pass;                          #from pprint import pformat
 pass;                          #pfrm15=lambda d:pformat(d,width=15)
 pass;                           LOG = (-2==-2)  # Do or dont logging.
-pass;                           ##!! waits correction
 
 GAP     = 5
 
-fav_json= app.app_ini_dir()+os.sep+'syn_favorites.json'
+fav_json = app.app_ini_dir()+os.sep+'syn_favorites.json'
 
 class Command:
-    def add_cur(self):
-        fn      = ed.get_filename()
-        if not fn:  return
+    def add_filename(self, fn):
+        if not fn:  return    
+        app.msg_status(_('Added to Favorites: ')+fn)
+        
         stores  = json.loads(open(fav_json).read(), object_pairs_hook=OrdDict) \
                     if os.path.exists(fav_json) else OrdDict()
         files   = stores.get('fv_files', [])
@@ -40,8 +37,12 @@ class Command:
         files  += [fn]
         stores['fv_files'] = files
         open(fav_json, 'w').write(json.dumps(stores, indent=4))
-       #def add_cur
-    
+                             
+    def add_cur_file(self):
+        self.add_filename(ed.get_filename())
+        
+    def add_cur_project(self):
+        self.add_filename(app.file_get_name(app.FILENAME_PROJECT))
     def dlg(self):
         pass;                  #LOG and log('=',())
         stores  = json.loads(open(fav_json).read(), object_pairs_hook=OrdDict) \
@@ -49,7 +50,6 @@ class Command:
         files   = stores.get('fv_files', [])
         fold    = stores.get('fv_fold', True)
         last    = stores.get('fv_last', 0)
-        brow_h  = 'Select file to append.\rTip: Select "SynFav.ini" for import Favorites from SynWrite.'
         while True:
             hasf= bool(files)
             itms= [f('{} ({})', os.path.basename(fv), os.path.dirname(fv)) for fv in files] \
@@ -61,7 +61,7 @@ class Command:
                  ,dict(cid='fvrs',tp='lbx'  ,t=GAP+20,h=250 ,l=GAP          ,w=400-GAP  ,items=itms                     ,en=hasf) # 
                  ,dict(cid='open',tp='bt'   ,t=GAP+20       ,l=GAP+400      ,w=100      ,cap=_('&Open')     ,props='1'  ,en=hasf) #     default
                  ,dict(cid='addc',tp='bt'   ,t=GAP+75       ,l=GAP+400      ,w=100      ,cap=_('&Add opened')                   ) # &a
-                 ,dict(cid='brow',tp='bt'   ,t=GAP+100      ,l=GAP+400      ,w=100      ,cap=_('Add&...')   ,hint=brow_h        ) # &.
+                 ,dict(cid='brow',tp='bt'   ,t=GAP+100      ,l=GAP+400      ,w=100      ,cap=_('Add&...')                       ) # &.
                  ,dict(cid='delt',tp='bt'   ,t=GAP+135      ,l=GAP+400      ,w=100      ,cap=_('&Delete')               ,en=hasf) # &d
                  ,dict(cid='fvup',tp='bt'   ,t=GAP+210      ,l=GAP+400      ,w=100      ,cap=_('Move &up')              ,en=hasf) # &u
                  ,dict(cid='fvdn',tp='bt'   ,t=GAP+235      ,l=GAP+400      ,w=100      ,cap=_('Move do&wn')            ,en=hasf) # &w
@@ -88,14 +88,7 @@ class Command:
                     store_b = True
             elif btn=='brow':
                 fl      = app.dlg_file(True, '', '', '')
-                if fl and os.path.basename(fl).upper()=='SynFav.ini'.upper():
-                    # Import from Syn
-                    syn_lns = open(fl, encoding='utf-16').read().splitlines()
-                    for syn_ln in syn_lns:
-                        if os.path.isfile(syn_ln) and syn_ln not in files:
-                            files  += [syn_ln]
-                            store_b = True
-                elif fl and fl not in files:
+                if fl and fl not in files:
                     files  += [fl]
                     store_b = True
             elif btn=='delt' and files and last>=0:
