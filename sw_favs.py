@@ -1,12 +1,13 @@
-''' Plugin for CudaText editor
+''' Plugin for Synwrite
 Authors:
     Andrey Kvichansky    (kvichans on github.com)
+    Alexey T (Synwrite)
 Version:
-    '1.0.0 2016-06-20'
+    '1.0.2 2016-06-21'
 ToDo: (see end of file)
 '''
 
-import  re, os, json, collections
+import  re, os, json
 import	sw				as app 
 from 	sw 			import ed
 from  .sw_plug_lib    import *
