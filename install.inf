@@ -11,5 +11,11 @@ params=dlg
 
 [ini2]
 section=Commands
-id=Favorites\Add current file to Favorites
-params=add_cur
+id=Favorites\Add current file
+params=add_cur_file
+
+[ini3]
+section=Commands
+id=Favorites\Add current project
+params=add_cur_project
+
