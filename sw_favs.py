@@ -1,8 +1,8 @@
-''' Plugin for CudaText editor
+''' Plugin for SynWrite editor
 Authors:
     Andrey Kvichansky    (kvichans on github.com)
 Version:
-    '1.0.0 2016-06-20'
+    '1.0.1 2016-06-20'
 ToDo: (see end of file)
 '''
 
@@ -27,12 +27,13 @@ pass;                           ##!! waits correction
 
 GAP     = 5
 
-fav_json= app.app_ini_dir()+os.sep+'syn_favorites.json'
+fav_json = app.app_ini_dir()+os.sep+'syn_favorites.json'
 
 class Command:
-    def add_cur(self):
-        fn      = ed.get_filename()
-        if not fn:  return
+    def add_filename(self, fn):
+        if not fn:  return    
+        app.msg_status(_('Added to Favorites: ')+fn)
+        
         stores  = json.loads(open(fav_json).read(), object_pairs_hook=OrdDict) \
                     if os.path.exists(fav_json) else OrdDict()
         files   = stores.get('fv_files', [])
@@ -40,8 +41,13 @@ class Command:
         files  += [fn]
         stores['fv_files'] = files
         open(fav_json, 'w').write(json.dumps(stores, indent=4))
-       #def add_cur
-    
+                             
+    def add_cur_file(self):
+        self.add_filename(ed.get_filename())
+        
+    def add_cur_project(self):
+        self.add_filename(app.file_get_name(app.FILENAME_PROJECT))
+        
     def dlg(self):
         pass;                  #LOG and log('=',())
         stores  = json.loads(open(fav_json).read(), object_pairs_hook=OrdDict) \
